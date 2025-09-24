@@ -62,28 +62,6 @@
       ],
       "Hash": "cad6cf7f1d5f6e906700b9d3e718c796"
     },
-    "attachment": {
-      "Package": "attachment",
-      "Version": "0.4.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "cli",
-        "desc",
-        "glue",
-        "knitr",
-        "magrittr",
-        "rmarkdown",
-        "roxygen2",
-        "stats",
-        "stringr",
-        "utils",
-        "withr",
-        "yaml"
-      ],
-      "Hash": "475d7324c1ce33c0aa43591a90eb9e83"
-    },
     "attempt": {
       "Package": "attempt",
       "Version": "0.3.1",
@@ -547,21 +525,6 @@
       ],
       "Hash": "d55aa087c47a63ead0f6fc10f8fa1ee0"
     },
-    "httr": {
-      "Package": "httr",
-      "Version": "1.4.7",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "R6",
-        "curl",
-        "jsonlite",
-        "mime",
-        "openssl"
-      ],
-      "Hash": "ac107251d9d9fd72f0ca8049988f1d7f"
-    },
     "httr2": {
       "Package": "httr2",
       "Version": "1.0.3",
@@ -948,13 +911,6 @@
       ],
       "Hash": "8f25ebe2ec38b1f2aef3b0d2ef76f6c4"
     },
-    "rematch": {
-      "Package": "rematch",
-      "Version": "2.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "cbff1b666c6fa6d21202f07e2318d4f1"
-    },
     "rematch2": {
       "Package": "rematch2",
       "Version": "2.1.2",
@@ -988,32 +944,6 @@
         "utils"
       ],
       "Hash": "47623f66b4e80b3b0587bc5d7b309888"
-    },
-    "rhub": {
-      "Package": "rhub",
-      "Version": "2.0.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "R6",
-        "callr",
-        "cli",
-        "curl",
-        "desc",
-        "gert",
-        "gitcreds",
-        "glue",
-        "jsonlite",
-        "pkgbuild",
-        "processx",
-        "rappdirs",
-        "rematch",
-        "rprojroot",
-        "utils",
-        "whoami"
-      ],
-      "Hash": "b679e06119e47533a26d1b4b90833a6c"
     },
     "rlang": {
       "Package": "rlang",
@@ -1412,18 +1342,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "c6abfa47a46d281a7d5159d0a8891e88"
-    },
-    "whoami": {
-      "Package": "whoami",
-      "Version": "1.3.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "httr",
-        "jsonlite",
-        "utils"
-      ],
-      "Hash": "ef0f4d9b8f2cc2ebeccae1d725b8a023"
     },
     "withr": {
       "Package": "withr",

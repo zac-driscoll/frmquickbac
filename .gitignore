@@ -1,6 +1,31 @@
-.Rproj.user
+# R session data
 .Rhistory
-.Rdata
-.httr-oauth
+.RData
+.Ruserdata
+
+# RStudio project files
+.Rproj.user/
+
+# renv local library (packages get restored from renv.lock instead)
+renv/library/
+renv/staging/
+
+# macOS cruft
 .DS_Store
-.quarto
+
+# Windows cruft
+Thumbs.db
+
+# Temporary files
+*.swp
+*.bak
+*.tmp
+
+# Logs & output
+*.log
+
+# Packrat (if ever left behind)
+packrat/
+
+# Golem build artifacts
+inst/doc

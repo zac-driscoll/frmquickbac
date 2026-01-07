@@ -1,0 +1,17 @@
+#Page 1 - Info Page
+  #TODO Info Page Create an info page 
+
+#Page 2 - Map
+  #TODO Map page - add headers to each of the cards
+  #TODO Map page - change color pallette of all vz
+  #TODO Map Page - add weather stations to map with toggle option and cute popup
+  #TODO Map Page - Add standard line to bar plot
+  #TODO Map Page - Add associated weather stations to site specific popups
+
+#Page 3 - Plot
+  #TODO Plot Page - change precip plot to site specific weather station precip
+  #TODO Plot Page - Convert to D3
+
+#Page 4 - Table
+  #TODO Table Page - Add a button do allow dowload of full year
+  #TODO Table Page - Add units to column headings

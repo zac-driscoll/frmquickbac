@@ -1,0 +1,158 @@
+.leaflet-selected-marker {
+  transition: opacity 0.4s ease-in-out, r 0.4s ease-in-out, transform 0.3s ease-in-out;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(12, 224, 47, 0.8));
+}
+
+.leaflet-selected-marker:hover {
+  transform: scale(1.15);
+}
+
+/* Optional: smoother fade when deselected */
+.leaflet-fade-out {
+  opacity: 0;
+}
+
+@keyframes gentle-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.005);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+.leaflet-selected-marker {
+  animation: gentle-pulse 1.9s ease-in-out infinite;
+  transition: opacity 0.4s ease-in-out, transform 0.3s ease-in-out;
+  filter: drop-shadow(0 0 5px rgba(55, 255, 15, 0.7));
+  opacity: 0.9;
+}
+
+/* tooltip.css */
+
+/* Tooltip container */
+.info-icon {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: #5b5fc7;
+  /* bluish-purple */
+  font-size: 22px;
+  transition: color 0.3s;
+}
+
+.info-icon:hover {
+  color: #7f83ff;
+}
+
+.info-icon {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: #5b5fc7;
+  font-size: 18px;
+  margin-left: 6px;
+}
+
+.info-icon:hover {
+  color: #7f83ff;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: 400px;
+  background: linear-gradient(135deg, #eaf4ff, #f5e8ff);
+  color: #1b1e2f;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  position: absolute;
+  z-index: 10;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.3s ease;
+  font-size: 18px;
+  line-height: 1.4;
+  border: 1px solid rgba(91, 95, 199, 0.25);
+}
+
+.tooltip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #f5e8ff transparent transparent transparent;
+}
+
+.info-icon:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* Optional refinement for table header icons */
+th .info-icon .tooltip-text {
+  bottom: 160%;
+  /* a bit higher than the default */
+}
+
+/* Perfectly align info icons in table headers */
+th>div:has(.info-icon) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+th .info-icon {
+  position: relative;
+  top: 1px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+
+
+/* Allow tooltips to escape card/table bounds */
+.card-body,
+.bs4Dash .card-body,
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+  overflow: visible !important;
+}
+
+
+/* Default tooltip */
+.info-icon .tooltip-text {
+  white-space: normal;
+  line-height: 1.35;
+  font-size: 14px;
+}
+
+/* Right-edge safe tooltip */
+.info-icon.right .tooltip-text {
+  left: auto;
+  right: 0;
+}
+
+.content-wrapper {
+  cursor: url("boat.png"), auto;
+}

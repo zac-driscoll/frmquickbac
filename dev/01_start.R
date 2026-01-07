@@ -19,22 +19,26 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ##
 golem::fill_desc(
-  pkg_name = "FRMQuickBac", # The name of the golem package containing the app (typically lowercase, no underscore or periods)
-  pkg_title = "PKG_TITLE", # What the Package Does (One Line, Title Case, No Period)
-  pkg_description = "PKG_DESC.", # What the package does (one paragraph).
+  pkg_name = "frmquickbac", # lowercase, no underscores or periods
+  pkg_title = "FRM Bacteria Data Visualization", 
+  pkg_description = "A Shiny application for visualizing FRM's bacteria monitoring data. 
+  The app is designed for use by external organizations, including the Milwaukee Water Works.",
   authors = person(
-    given = "AUTHOR_FIRST", # Your First Name
-    family = "AUTHOR_LAST", # Your Last Name
-    email = "AUTHOR@MAIL.COM", # Your email
-    role = c("aut", "cre") # Your role (here author/creator)
+    given = "Zac",
+    family = "Driscoll",
+    email = "zdriscoll@mmsd.com",
+    role = c("aut", "cre")
+    # comment = c(ORCID = "0000-0000-0000-0000") # optional
   ),
-  repo_url = NULL, # The URL of the GitHub repo (optional),
-  pkg_version = "0.0.0.9000", # The version of the package containing the app
-  set_options = TRUE # Set the global golem options
+  repo_url = NULL, # can fill in when GitHub repo is ready
+  pkg_version = "0.0.0.9000",
+  set_options = TRUE
 )
 
-## Install the required dev dependencies ----
+renv::init()
 golem::install_dev_deps()
+renv::install("MMSDGIT/mmsd.sql")
+
 
 ## Create Common Files ----
 ## See ?usethis for more information
@@ -48,27 +52,22 @@ usethis::use_lifecycle_badge("Experimental")
 usethis::use_news_md(open = FALSE)
 
 ## Init Testing Infrastructure ----
-## Create a template for tests
-golem::use_recommended_tests()
+
 
 ## Favicon ----
 # If you want to change the favicon (default is golem's one)
 golem::use_favicon() # path = "path/to/ico". Can be an online file.
 # golem::remove_favicon() # Uncomment to remove the default favicon
 
-## Add helper functions ----
-golem::use_utils_ui(with_test = TRUE)
-golem::use_utils_server(with_test = TRUE)
 
 ## Use git ----
 usethis::use_git()
 ## Sets the remote associated with 'name' to 'url'
 usethis::use_git_remote(
   name = "origin",
-  url = "https://github.com/<OWNER>/<REPO>.git"
+  url = "https://github.com/zac-driscoll/frmquickbac.git"
 )
 
 # You're now set! ----
-
 # go to dev/02_dev.R
 rstudioapi::navigateToFile("dev/02_dev.R")

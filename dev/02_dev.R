@@ -20,8 +20,30 @@ attachment::att_amend_desc()
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module(name = "name_of_module1", with_test = TRUE) # Name of the module
-golem::add_module(name = "name_of_module2", with_test = TRUE) # Name of the module
+golem::add_module(name = "selection_pane1", with_test = TRUE) # Name of the module
+golem::add_module(name = "map", with_test = TRUE) # Name of the module
+golem::add_module(name = "leaflet_map", with_test = FALSE) # Name of the module
+golem::add_module(name = "filter_map_dat", with_test = FALSE) # Name of the module
+golem::add_module(name = "map_dt", with_test = FALSE) # Name of the module
+golem::add_module(name = "map_barplot", with_test = FALSE) # Name of the module
+golem::add_module(name = "map_barplot_d3", with_test = FALSE) # Name of the module
+golem::add_module(name = 'highlight_map')
+
+##plotting module
+golem::add_module(name = "plot_page", with_test = FALSE) # Name of the module
+golem::add_module(name = "selection_pane_plot", with_test = TRUE) # Name of the module
+golem::add_module(name = "plot_filter_plot_dat", with_test = TRUE) # Name of the module
+golem::add_module(name = "plot_dat", with_test = TRUE) # Name of the module
+golem::add_module(name = "plot_dat_d3", with_test = FALSE) # Name of the module
+golem::add_module(name = "plot_filter_sum_tbl", with_test = TRUE) # Name of the module
+golem::add_module(name = "plot_create_html_tbl", with_test = TRUE) # Name of the module
+golem::add_module(name = "plot_sum_tbl", with_test = TRUE) # Name of the module
+
+#Download modlue
+golem::add_module(name = "download_page", with_test = TRUE) # Name of the module
+golem::add_module(name = "selection_pane_table", with_test = TRUE) # Name of the module
+golem::add_module(name = "download_table_dt", with_test = TRUE) # Name of the module
+golem::add_module(name = "download_filter_tbl_dat", with_test = TRUE) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
@@ -33,6 +55,8 @@ golem::add_utils("helpers", with_test = TRUE)
 golem::add_js_file("script")
 golem::add_js_handler("handlers")
 golem::add_css_file("custom")
+
+golem::add_css_file("custom2")
 golem::add_sass_file("custom")
 golem::add_any_file("file.json")
 
@@ -54,8 +78,7 @@ devtools::build_vignettes()
 ## Set the code coverage service ("codecov" or "coveralls")
 usethis::use_coverage()
 
-# Create a summary readme for the testthat subdirectory
-covrpage::covrpage()
+
 
 ## CI ----
 ## Use this part of the script if you need to set up a CI

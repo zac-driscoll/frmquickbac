@@ -1,0 +1,35 @@
+/* Container for the icon */
+.info-icon {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+/* The tooltip bubble */
+.info-icon .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: 280px;
+  background: rgba(20, 30, 45, 0.95);
+  color: #fff;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px 12px;
+  position: absolute;
+  z-index: 10000;
+  top: 22px;
+  left: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Show on hover */
+.info-icon:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Optional: icon color/size */
+.info-icon i {
+  font-size: 18px;
+}

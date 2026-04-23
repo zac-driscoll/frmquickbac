@@ -7,6 +7,8 @@
   #TODO Map Page - add weather stations to map with toggle option and cute popup
   #TODO Map Page - Add standard line to bar plot
   #TODO Map Page - Add associated weather stations to site specific popups
+  #TODO Map Page - Add more basemaps
+  #TODO Map Page - Change highlight color to chartruse
 
 #Page 3 - Plot
   #TODO Plot Page - change precip plot to site specific weather station precip

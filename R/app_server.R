@@ -37,7 +37,8 @@ app_server <- function(input, output, session) {
   mod_plot_sum_tbl_server("plot_sum_tbl_1", ecoli_dat, do_dat, fecal_dat)
 
 ### Download Table Server
-  selected_inputs_tbl <- mod_selection_pane_table_server("selection_pane_table_1")
-  tbl_dat <- mod_download_filter_tbl_dat_server("download_filter_tbl_dat_1", selected_inputs_tbl)
+  #selected_inputs_tbl <- mod_selection_pane_table_server("selection_pane_table_1")
+  #tbl_dat <- mod_download_filter_tbl_dat_server("download_filter_tbl_dat_1", selected_inputs_tbl)
+  tbl_dat <- mod_selection_pane_table_server("selection_pane_table_1")
   mod_download_table_dt_server("download_table_dt_1", tbl_dat)
 }

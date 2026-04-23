@@ -6,7 +6,6 @@
 //           and glow-on-hover
 // ============================================================================
 
-
 // ============================================================================
 // SETUP & CLEANUP
 // ============================================================================
@@ -34,8 +33,8 @@ if (options.no_records) {
   return; // ⛔ STOP EXECUTION HERE
 }
 
-const headerHeight = 105;
-const margin = { top: 30, right: 25, bottom: 90, left: 75 };
+const headerHeight = 10;
+const margin = { top: 30, right: 25, bottom: 50, left: 75 };
 const w = width - margin.left - margin.right;
 const h = height - headerHeight - margin.top - margin.bottom;
 
@@ -66,61 +65,25 @@ const subtitle = opts.subtitle || "";
 const precip_title = opts.precip_title || "";
 const info_html = opts.info_html
 const info_icon = opts.infoIcon
-
+const wq_std = opts.wq_std
+const base_size = opts.base_size
 
 // ============================================================================
 // SVG BACKGROUND (plot.background)
 // ============================================================================
+
+// ---- Background ----
 svg
   .style("background", colors.plotBg)
-  .style("border", `1px solid ${colors.border}`);
-
+  .style("border", `1px solid ${colors.border}`)
+  .attr("viewBox", `0 0 ${width} ${height}`)
+  .attr("preserveAspectRatio", "xMidYMid meet");
 
 // ============================================================================
 // DEFINITIONS (single <defs> for legend + glow)
 // ============================================================================
 const defs = svg.append("defs");
 
-
-// ============================================================================
-// HEADER BAND
-// ============================================================================
-svg.append("rect")
-  .attr("x", 0)
-  .attr("y", 0)
-  .attr("width", width)
-  .attr("height", headerHeight)
-  .attr("fill", colors.panelBg)
-  .attr("stroke", colors.border)
-  .attr("stroke-width", 1);
-
-
-// ============================================================================
-// TITLE + SUBTITLE (left-aligned)
-// ============================================================================
-const titleGroup = svg.append("g")
-  .attr("transform", "translate(25, 32)");
-
-titleGroup.append("text")
-  .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "24px")
-  .attr("font-weight", "bold")
-  .attr("fill", colors.axisTitle)
-  .text(title);
-
-titleGroup.append("text")
-  .attr("y", 26)
-  .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "16px")
-  .attr("fill", colors.caption)
-  .text(subtitle);
-
-titleGroup.append("text")
-  .attr("y", 50)
-  .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "16px")
-  .attr("fill", colors.caption)
-  .text(precip_title);
 
 // ============================================================================
 // ROOT GROUP (plotting area)
@@ -189,77 +152,6 @@ function setTooltipText(lines) {
   });
 }
 
-// -----------------------------------------------------------------------------
-// Precip line + inline info glyph
-// -----------------------------------------------------------------------------
-const precipText = titleGroup.append("text")
-  .attr("y", 50)
-  .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "16px")
-  .attr("fill", colors.caption);
-
-precipText.append("tspan").text(precip_title);
-
-const infoIcon = precipText.append("tspan")
-  .text("  ⓘ")
-  .attr("fill", colors.axisTitle)
-  .style("cursor", "help");
-
-// Tooltip content
-const tooltipLines = [
-  "Precipitation Data",
-  "MMSD maintains a network of weather stations throughout its service area.",
-  "Each monitoring site is assigned the nearest weather station.",
-  "Values represent total precipitation during the 72 hours prior to sampling.",
-  "Range reflects min and max based on current page filters."
-];
-
-// -----------------------------------------------------------------------------
-// Hover behavior (simple + clean)
-// -----------------------------------------------------------------------------
-infoIcon
-  .on("mouseover", function () {
-    const pad = 12;
-
-    // Build text
-    setTooltipText(tooltipLines);
-
-    // Position text inside tooltip
-    tooltipText.attr("x", pad).attr("y", pad);
-    tooltipText.selectAll("tspan").attr("x", pad);
-
-    // Measure after it exists
-    const bbox = tooltipText.node().getBBox();
-
-    // Size background
-    tooltipBg
-      .attr("width", bbox.width + pad * 2)
-      .attr("height", bbox.height + pad * 2);
-
-    // Position tooltip near icon (using icon bbox in titleGroup space)
-    const iconBox = this.getBBox();
-    const tipX = 25 + iconBox.x + iconBox.width - 220;  // move left ~220px
-    const tipY = 32 + 50 - 14; // slight lift looks nicer
-
-    tooltip1.raise(); // keep above other SVG elements
-    tooltip1
-      .attr("transform", `translate(${tipX}, ${tipY + 4})`)
-      .style("display", null)
-      .interrupt()
-      .style("opacity", 0)
-      .transition()
-      .duration(120)
-      .style("opacity", 1)
-      .attr("transform", `translate(${tipX}, ${tipY})`);
-  })
-  .on("mouseout", function () {
-    tooltip1
-      .interrupt()
-      .transition()
-      .duration(100)
-      .style("opacity", 0)
-      .on("end", () => tooltip1.style("display", "none"));
-  });
 
 // ============================================================================
 // TOOLTIP CONTAINER (Leaflet-style HTML)
@@ -432,13 +324,21 @@ bars
 // ============================================================================
 // Y AXIS
 // ============================================================================
+
+function clamp(x, lo, hi) {
+  return Math.max(lo, Math.min(hi, x));
+}
+
+// Use the number of visible ticks/labels (pick one)
+const fontEm = clamp(1.75 - 0.02 * data.length, 1.3, 1.75);
+
 const yAxis = g.append("g")
   .attr("class", "axis axis-y")
   .call(d3.axisLeft(y));
 
 yAxis.selectAll("text")
   .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "20px")
+  .style("font-size", `${fontEm}em`)
   .attr("fill", colors.axisText);
 
 yAxis.selectAll("path, line")
@@ -449,14 +349,20 @@ yAxis.selectAll("path, line")
 // ============================================================================
 // X AXIS
 // ============================================================================
+
+const maxVal = d3.max(data, d => d.Result);
+const digitCount = Math.floor(Math.abs(maxVal)).toString().length;
+const fontEmX = digitCount <= 5 ? 6 : 4;
+
+
 const xAxis = g.append("g")
   .attr("class", "axis axis-x")
   .attr("transform", `translate(0,${h})`)
-  .call(d3.axisBottom(x).ticks(5));
+  .call(d3.axisBottom(x).ticks(fontEmX));
 
 xAxis.selectAll("text")
   .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "20px")
+  .style("font-size", `${fontEm}em`)
   .attr("fill", colors.axisText);
 
 xAxis.selectAll("path, line")
@@ -470,87 +376,48 @@ xAxis.selectAll("path, line")
 svg.append("text")
   .attr("text-anchor", "middle")
   .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "22px")
+  .attr("font-size", "1em")
   .attr("font-weight", "bold")
   .attr("fill", colors.axisTitle)
   .attr("x", margin.left + w / 2)
-  .attr("y", height - 20)
+  .attr("y", height - 10)
   .text(units);
 
 
-// ============================================================================
-// GRADIENT LEGEND (right-aligned in header)
-// ============================================================================
-const legendWidth = 260;
-const legendHeight = 16;
 
-const legendX = width - legendWidth - 25;
-const legendY = 48;
+//wq std line
+const xStd = margin.left + x(wq_std);
+const yTop = margin.top + headerHeight;
+const yBot = yTop + h;
 
-const legendGroup = svg.append("g")
-  .attr("transform", `translate(${legendX}, ${legendY})`);
+const wqLine = svg.append("line")
+  .attr("x1", xStd)
+  .attr("x2", xStd)
+  .attr("y1", yTop)
+  .attr("y2", yTop)               // start collapsed
+  .attr("stroke", "#C0392B")
+  .attr("stroke-width", 2)
+  .attr("stroke-dasharray", "6,4")
+  .attr("opacity", 0.9);
 
-const gradient = defs.append("linearGradient")
-  .attr("id", "legend-gradient")
-  .attr("x1", "0%")
-  .attr("x2", "100%")
-  .attr("y1", "0%")
-  .attr("y2", "0%");
+wqLine
+  .transition()
+  .duration(800)
+  .ease(d3.easeCubicOut)
+  .attr("y2", yBot);              // animate to full height
 
-// ----------------------------------------------------------------------------
-// Legend gradient: value-linear, matches R palette direction via options.sort_desc
-// ----------------------------------------------------------------------------
-const valueAccessor = d => +d.Result_num; // or +d.Result, whichever your data actually has
-const extent = d3.extent(data, valueAccessor);
-const minV = extent[0], maxV = extent[1];
-const midV = (minV + maxV) / 2;
-
-// In R:
-//   if (is_do) palette = c("red","orange","blue")
-//   else       palette = c("blue","orange","red")
-const legendColors = options.sort_desc
-  ? ["red", "orange", "blue"]
-  : ["blue", "orange", "red"];
-
-const legendColorScale = d3.scaleLinear()
-  .domain([minV, midV, maxV])
-  .range(legendColors)
-  .clamp(true)
-  .interpolate(d3.interpolateLab);
-
-const nStops = 40;
-d3.range(nStops).forEach(i => {
-  const t = i / (nStops - 1);
-  const v = minV + t * (maxV - minV);
-  gradient.append("stop")
-    .attr("offset", `${t * 100}%`)
-    .attr("stop-color", legendColorScale(v));
-});
-
-legendGroup.append("rect")
-  .attr("width", legendWidth)
-  .attr("height", legendHeight)
-  .attr("rx", 4)
-  .attr("ry", 4)
-  .attr("fill", "url(#legend-gradient)")
-  .attr("stroke", colors.axisTitle)
-  .attr("stroke-width", 1);
-
-const legendScale = d3.scaleLinear()
-  .domain(extent)         // reuse the same extent from above
-  .range([0, legendWidth]);
-const legendAxis = d3.axisBottom(legendScale)
-  .ticks(4)
-  .tickSize(6);
-
-legendGroup.append("g")
-  .attr("transform", `translate(0, ${legendHeight})`)
-  .call(legendAxis);
-
-legendGroup.selectAll("text")
+const label = svg.append("text")
+  .attr("x", xStd)
+  .attr("y", yTop - 8)
+  .attr("text-anchor", "middle")
   .attr("font-family", "Segoe UI, sans-serif")
-  .attr("font-size", "14px")
-  .attr("fill", colors.axisText);
+  .attr("font-size", "0.9em")
+  .attr("fill", "#C0392B")
+  .attr("font-weight", 600)
+  .attr("opacity", 0)
+  .text("WQ Standard");
 
-legendGroup.selectAll("path, line")
-  .attr("stroke", colors.axisTitle);
+label.transition()
+  .delay(450)
+  .duration(350)
+  .attr("opacity", 1);

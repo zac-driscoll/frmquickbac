@@ -1,17 +1,102 @@
 // ============================================================================
 // Faceted time-series (r2d3 / D3 v5)
 // Shared X (Date), per-facet Y (ReadingNum)
+// Two series by `type` (historic vs results)
+// FAST animations + HTML tooltip BUILT IN D3 (no R-side TooltipHTML)
 // ============================================================================
 
 // r2d3 provides: data, svg, width, height
 svg.selectAll("*").remove();
 
+// ============================================================================
+// HTML TOOLTIP (single instance; remove old on re-render)
+// ============================================================================
+d3.selectAll("div.r2d3-tooltip").remove();
+
+const tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "r2d3-tooltip")
+  .style("position", "absolute")
+  .style("pointer-events", "none")
+  .style("opacity", 0)
+  .style("z-index", 9999);
+
+// ---- Tooltip helpers (match your template) ----
+const fmtDate = d3.timeFormat("%Y-%m-%d");
+function safeStr(x) { return (x == null ? "" : String(x)); }
+function escHtml(s) {
+  return safeStr(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+function round2(x) {
+  const v = +x;
+  return isFinite(v) ? (Math.round(v * 100) / 100).toFixed(2) : "";
+}
+function tooltipHTML(d) {
+  const color = d.Color || "#064789";
+  const type = escHtml(d.type);
+  const site = escHtml(d.SiteCode || d.Site || "");
+  const date = d.Date instanceof Date ? fmtDate(d.Date) : escHtml(d.Date);
+  //const res = round2(d.ReadingNum);
+  const unit = escHtml(d.Units || "");
+
+  function formatNumber(x) {
+    const v = +x;
+    return isFinite(v)
+      ? v.toLocaleString(undefined, { maximumFractionDigits: 2 })
+      : "";
+  }
+
+  return `
+<div style="
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  border: 3px solid ${color};
+  border-radius: 10px;
+  padding: 10px 14px;
+  background-color: rgba(255,255,255,0.9);
+  color: #111;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.25);
+  max-width: 500px;
+">
+  <div style="font-weight:bold; font-size:18px; color:${color}; margin-bottom:6px;">
+    ${type}
+  </div>
+  <div style="font-size:16px; color:black; margin-bottom:3px;">
+    ${site}
+  </div>
+
+  <hr style="border:none; border-top:1px solid ${color}; margin:10px 0;">
+
+  <table style="width:100%; border-collapse:collapse; text-align:center;">
+    <thead style="background-color:${color}; color:white;">
+      <tr>
+        <th style="padding:6px;">Date</th>
+        <th style="padding:6px;">Result</th>
+        <th style="padding:6px;">Units</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:6px; font-weight:bold;">${date}</td>
+        <td style="padding:6px;">${formatNumber(d.ReadingNum)}</td>
+        <td style="padding:6px;">${unit}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>`;
+}
 
 // ---- Layout constants ----
-const headerHeight = 90;
-const margin = { top: 30, right: 25, bottom: 25, left: 25 };
-const colGutter = 50;
-const rowGutter = 10;
+const headerHeight = 0;
+const margin = { top: 25, right: 25, bottom: 25, left: 25 };
+const colGutter = 20;
+const rowGutter = 20;
 const nCols = 2;
 
 // ---- Theme colors ----
@@ -31,6 +116,7 @@ svg
   .attr("width", width)
   .attr("height", height)
   .style("background", colors.plotBg)
+  //.style("border-radius", "10px")
   .style("border", `1px solid ${colors.border}`);
 
 svg.append("rect")
@@ -38,13 +124,12 @@ svg.append("rect")
   .attr("y", 0)
   .attr("width", width)
   .attr("height", height)
-  .attr("fill", colors.plotBg)
+  .attr("fill", colors.plotBg);
 
-// ---- Parse + sanitize once (DO THIS FIRST) ----
+// ---- Parse + sanitize once ----
 const parseYMD = d3.timeParse("%Y-%m-%d");
 
 data.forEach(d => {
-  // If Date already, keep it. If string like "2025-04-08", parse locally.
   d.Date = (d.Date instanceof Date) ? d.Date : parseYMD(String(d.Date).slice(0, 10));
   d.ReadingNum = +d.ReadingNum;
 });
@@ -55,7 +140,7 @@ const clean = data.filter(d =>
   isFinite(d.ReadingNum)
 );
 
-// ---- Build facets ONCE from clean data ----
+// ---- Build facets once ----
 const facets = d3.nest()
   .key(d => d.LabelName)
   .entries(clean);
@@ -82,7 +167,7 @@ facets.sort((a, b) => {
 // ---- Inner plotting area within each facet ----
 const inner = { top: 70, right: 50, bottom: 40, left: 80 };
 
-// ---- Compute facet plot size (based on final facets) ----
+// ---- Compute facet plot size ----
 const nRows = Math.ceil(facets.length / nCols);
 
 const plotWidth =
@@ -94,23 +179,19 @@ const plotHeight =
 const innerW = plotWidth - inner.left - inner.right;
 const innerH = plotHeight - inner.top - inner.bottom;
 
-// ---- Shared X (global domain) ----
+// ---- Shared X ----
 const xDomain = d3.extent(clean, d => d.Date);
-
-// --- derive the year from your filtered data ---
 const year = d3.timeYear.floor(xDomain[0]).getFullYear();
 
-// --- fixed ticks: Jan 1..Dec 1 (always 12 ticks) ---
 const monthTicks = d3.timeMonth.range(
   new Date(year, 0, 1),
-  new Date(year + 1, 0, 1) // exclusive end
+  new Date(year + 1, 0, 1)
 );
 
-// single-letter month labels
 const monthLetter = d => "JFMAMJJASOND"[d.getMonth()];
 
 const x = d3.scaleTime()
-  .domain([new Date(year, 0, 1), new Date(year, 11, 31, 23, 59, 59)]) // force full year
+  .domain([new Date(year, 0, 1), new Date(year, 11, 31, 23, 59, 59)])
   .range([0, innerW]);
 
 const xAxis = d3.axisBottom(x)
@@ -136,7 +217,7 @@ const facetG = gRoot.selectAll(".facet")
     return `translate(${x0},${y0})`;
   });
 
-// ---- Panel + title ----
+// ---- Panel ----
 facetG.append("rect")
   .attr("class", "panel-bg")
   .attr("x", 0)
@@ -146,24 +227,31 @@ facetG.append("rect")
   .attr("fill", colors.panelBg)
   .attr("stroke", colors.border);
 
-
 // ---- Plot area group per facet ----
 facetG.append("g")
   .attr("class", "plot-area")
   .attr("transform", `translate(0,${inner.top})`);
 
-// ---- Line generator (per-facet y injected) ----
+// ---- Line generator ----
 const line = d3.line()
   .defined(d => isFinite(d.ReadingNum))
   .x(d => x(d.Date))
   .y(d => d._y(d.ReadingNum));
 
+// Series color helper (grepl-ish)
+function seriesColor(typeStr) {
+  const s = String(typeStr || "").toLowerCase();
+  if (/histor/.test(s)) return "#0e770eff";
+  if (/result/.test(s)) return "#064789";
+  return colors.axisText;
+}
+
 // ---- Draw per facet ----
-facetG.each(function (facet, i) {
+facetG.each(function (facet) {
   const gFacet = d3.select(this);
   const gPlot = gFacet.select(".plot-area");
-  const row = Math.floor(i / nCols);
 
+  // Sort once per facet
   const rows = (facet.values || [])
     .slice()
     .sort((a, b) => a.Date - b.Date);
@@ -179,32 +267,26 @@ facetG.each(function (facet, i) {
     yMax += pad;
   }
 
-  // Dynamic Left axis locatio
+  // Dynamic left padding
   const maxAbs = Math.max(Math.abs(yMin), Math.abs(yMax));
   const digits = String(Math.round(maxAbs)).replace("-", "").length;
   const leftPad = Math.max(45, 75 + digits * 8);
 
-  // --- move plot area right by leftPad ---
   gPlot.attr("transform", `translate(${leftPad},${inner.top})`);
 
-
-  // add background 
-
-
-  // Dynamic Title Placement
-  // Facet title aligned above the y-axis line
-  gFacet.selectAll(".facet-title").remove();  // avoid duplicates on re-render
-
+  // Title
+  gFacet.selectAll(".facet-title").remove();
   gFacet.append("text")
     .attr("class", "facet-title")
-    .attr("x", leftPad)      // <-- aligns with y-axis line
+    .attr("x", leftPad)
     .attr("y", 40)
-    .attr("font-size", "28px")
+    .attr("font-size", facet.key.includes("Precip") ? "1.1em" : "1.5em")
     .attr("font-weight", "400")
     .style("fill", colors.axisTitle)
     .style("font-style", facet.key === "E. coli" ? "italic" : "normal")
     .attr("text-anchor", "start")
     .text(facet.key);
+
 
   const y = d3.scaleLinear()
     .domain([yMin, yMax])
@@ -215,36 +297,21 @@ facetG.each(function (facet, i) {
     .ticks(4)
     .tickSizeOuter(0);
 
-  // Clear any previous render inside this facet
   gPlot.selectAll("*").remove();
 
-  // ----------------------------
-  // GRIDLINES (draw first so they stay behind)
-  // ----------------------------
-  // Y gridlines
+  // Gridlines
   gPlot.append("g")
     .attr("class", "y-grid")
-    .call(
-      d3.axisLeft(y)
-        .ticks(4)
-        .tickSize(-innerW)
-        .tickFormat("")
-    )
+    .call(d3.axisLeft(y).ticks(4).tickSize(-innerW).tickFormat(""))
     .selectAll("line")
     .style("stroke", colors.gridMinor);
 
   gPlot.selectAll(".y-grid path").remove();
 
-  // X gridlines (ALIGN WITH monthTicks)
   gPlot.append("g")
     .attr("class", "x-grid")
     .attr("transform", `translate(0,${innerH})`)
-    .call(
-      d3.axisBottom(x)
-        .tickValues(monthTicks)   // <— key change vs .ticks(5)
-        .tickSize(-innerH)
-        .tickFormat("")
-    );
+    .call(d3.axisBottom(x).tickValues(monthTicks).tickSize(-innerH).tickFormat(""));
 
   gPlot.selectAll(".x-grid line")
     .style("stroke", colors.axisText)
@@ -254,14 +321,12 @@ facetG.each(function (facet, i) {
 
   gPlot.selectAll(".x-grid path").remove();
 
-  // ----------------------------
-  // AXES
-  // ----------------------------
+  // Axes
   gPlot.append("g")
     .attr("class", "y-axis")
     .call(yAxis)
     .selectAll("text")
-    .style("font-size", 18)
+    .style("font-size", "1.4em")
     .style("fill", colors.axisText);
 
   const xAxisG = gPlot.append("g")
@@ -271,53 +336,119 @@ facetG.each(function (facet, i) {
 
   xAxisG.selectAll("text")
     .attr("text-anchor", "middle")
-    .attr("transform", null)   // or .attr("transform", "rotate(0)")
     .attr("dx", "0em")
     .attr("dy", "0.9em")
-    .style("font-size", 18)
+    .style("font-size", "1.2em")
     .style("fill", colors.axisText);
 
   gPlot.selectAll(".x-axis path,.x-axis line,.y-axis path,.y-axis line")
     .style("stroke", colors.gridMajor);
 
-  // Inject per-facet y into rows for line generator
+  // Inject per-facet y into rows
   rows.forEach(r => { r._y = y; });
 
-
-  // ----------------
-  // Y axes label
-  // -------------
-
+  // Y axis label
   const unit = rows.find(d => d.Units != null && d.Units !== "")?.Units || "";
   gPlot.append("text")
     .attr("class", "y-axis-label")
     .attr("transform", "rotate(-90)")
     .attr("x", -innerH / 2)
-    .attr("y", -leftPad + 28)   // tuck just left of tick labels
+    .attr("y", -leftPad + 28)
     .attr("text-anchor", "middle")
     .style("font-size", "20px")
     .attr("font-weight", "600")
     .style("fill", colors.axisTitle)
     .text(unit);
 
-  // ----------------------------
-  // SERIES (draw last so it's on top)
-  // ----------------------------
-  gPlot.append("path")
-    .datum(rows)
+  // Split series within this facet
+  const series = d3.nest()
+    .key(d => d.type)
+    .entries(rows);
+
+  const sG = gPlot.selectAll(".series")
+    .data(series, d => d.key)
+    .enter()
+    .append("g")
+    .attr("class", d => `series series-${String(d.key).replace(/\s+/g, "-")}`);
+
+  // Lines (fast draw, restore dash for historical)
+  const linePaths = sG.append("path")
     .attr("class", "series-line")
     .attr("fill", "none")
-    .attr("stroke", colors.axisText)
+    .attr("stroke", d => seriesColor(d.key))
     .attr("stroke-width", 3)
-    .attr("d", line);
+    .attr("d", d => line(d.values || []));
 
-  gPlot.selectAll(".pt")
-    .data(rows.filter(d => isFinite(d.ReadingNum)))
-    .enter()
-    .append("circle")
-    .attr("class", "pt")
-    .attr("r", d => /Precip/i.test(d.LabelName) ? 0 : 6)
-    .attr("cx", d => x(d.Date))
-    .attr("cy", d => y(d.ReadingNum))
-    .attr("fill", "#219e77");
+  linePaths.each(function (d) {
+    const path = d3.select(this);
+    const total = this.getTotalLength();
+    const isHist = /histor/.test(String(d.key).toLowerCase());
+
+    path
+      .attr("stroke-dasharray", `${total} ${total}`)
+      .attr("stroke-dashoffset", total)
+      .transition()
+      .duration(1200)
+      .ease(d3.easeCubicOut)
+      .attr("stroke-dashoffset", 0)
+      .on("end", function () {
+        d3.select(this).attr("stroke-dasharray", isHist ? "6,4" : null);
+      });
+  });
+
+  // Points (fast pulse + tooltips)
+  const targetR = d => /Precip/i.test(d.LabelName) ? 0 : 4;
+
+  sG.each(function (s) {
+    const g = d3.select(this);
+    const vals = (s.values || []).filter(d => isFinite(d.ReadingNum));
+
+    const pts = g.selectAll("circle.pt")
+      .data(vals)
+      .enter()
+      .append("circle")
+      .attr("class", "pt")
+      .attr("cx", d => x(d.Date))
+      .attr("cy", d => y(d.ReadingNum))
+      .attr("opacity", 1)
+      .attr("r", targetR)
+      .attr("fill", seriesColor(s.key))
+      .style("cursor", "pointer");
+
+    // quick pulse (no blank lag)
+    pts
+      .attr("r", d => (targetR(d) === 0 ? 0 : 5))
+      .transition()
+      .duration(900)
+      .ease(d3.easeCubicOut)
+      .attr("r", targetR);
+
+    // Tooltip interactions
+    pts
+      .on("mouseover", function (d) {
+        // Skip if point is hidden
+        if (targetR(d) === 0) return;
+
+        d3.select(this)
+          .attr("stroke", "#030c13")
+          .attr("stroke-width", 2);
+
+        tooltip
+          .html(tooltipHTML(d))
+          .style("opacity", 1);
+      })
+      .on("mousemove", function () {
+        tooltip
+          .style("left", (d3.event.pageX + 15) + "px")
+          .style("top", (d3.event.pageY + 15) + "px");
+      })
+      .on("mouseout", function () {
+        d3.select(this)
+          .attr("stroke", null)
+          .attr("stroke-width", null);
+
+        tooltip.style("opacity", 0);
+      });
+  });
+
 });

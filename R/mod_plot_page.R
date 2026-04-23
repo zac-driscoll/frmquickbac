@@ -15,8 +15,8 @@ mod_plot_page_ui <- function(id) {
       shiny::fluidRow(
       mod_selection_panel_plot_ui("plot_select1"),
       mod_plot_sum_tbl_ui("plot_sum_tbl_1"))),
-    #shiny::column(9,  mod_plot_dat_d3_ui("plot_dat_d3_1"))
-    shiny::column(9,  mod_plot_dat_ui("plot_dat_1"))
+    shiny::column(9,  mod_plot_dat_d3_ui("plot_dat_d3_1"))
+    #shiny::column(9,  mod_plot_dat_ui("plot_dat_1"))
     )
   )
 }
@@ -27,6 +27,7 @@ mod_plot_page_ui <- function(id) {
 mod_plot_page_server <- function(id){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
+ 
   })
 }
     

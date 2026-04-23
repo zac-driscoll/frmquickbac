@@ -1,7 +1,7 @@
 .leaflet-selected-marker {
   transition: opacity 0.4s ease-in-out, r 0.4s ease-in-out, transform 0.3s ease-in-out;
   opacity: 0.9;
-  filter: drop-shadow(0 0 6px rgba(12, 224, 47, 0.8));
+  filter: drop-shadow(0 0 6px #0ce02fcc);
 }
 
 .leaflet-selected-marker:hover {
@@ -153,6 +153,92 @@ td {
   right: 0;
 }
 
-.content-wrapper {
-  cursor: url("boat.png"), auto;
+html,
+body,
+* {
+  cursor: url("/www/boat.png") 16 16, auto !important;
+}
+
+
+
+/* Bigger Shiny notifications */
+.shiny-notification {
+  width: 400px;
+  height: 125px;
+  font-size: 25px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-weight: bold;
+
+  /* Position tweaks */
+  top: 0px !important;
+  /* DOWN if bigger number, UP if smaller */
+  right: 150px !important;
+  /* LEFT if bigger number */
+}
+
+
+/* Optional: make message text breathe */
+.shiny-notification-content {
+  line-height: 1.4;
+}
+
+
+table.dataTable thead th {
+  text-align: center;
+}
+
+.lp-hero-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.25rem;
+}
+
+html {
+  font-size: 14px;
+}
+
+
+/* Base selectInput */
+select.form-control {
+  height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Selectize input */
+.selectize-control.single .selectize-input {
+  min-height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Dropdown items */
+.selectize-dropdown {
+  font-size: 0.75rem;
+}
+
+.shiny-input-container label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+
+table.dataTable {
+  font-size: 0.8rem;
+}
+
+table.dataTable tbody td {
+  padding: 0.25rem 0.5rem;
+}
+
+.compact-ui .nav-tabs .nav-link {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.5rem;
+}
+
+body>div.wrapper>div.content-wrapper>section.content>div.content-wrapper {
+  margin-left: 1px;
 }

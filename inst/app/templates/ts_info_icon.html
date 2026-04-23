@@ -1,0 +1,109 @@
+<div style="
+  position:relative;
+  background: linear-gradient(180deg, #F1F9FF 0%, #E6ECF4 100%);
+  border: 1px solid #A9CCE3;
+  border-radius: 14px 14px 0 0;
+  padding: 14px 18px 16px 18px;
+  text-align: left;
+  font-family: Poppins, Arial, sans-serif;
+  box-shadow: 0 8px 18px rgba(6,71,137,0.10);
+">
+  <div class="plot-title" style="margin:0;
+      font-size:1.4em;
+      color:#0A2B43;
+      font-weight:700;
+      letter-spacing:0.2px;">
+    {title}
+  </div>
+
+  <div class="plot-subline" style="
+      margin-top:0.5em;
+      font-size:1em;
+      color:#4b6b82;
+      max-width:900px;
+      line-height:1.4;
+      text-align:left;
+    ">
+    <span class="plot-subline-label"><strong>Date: </strong> &nbsp;</span>
+    <span class="plot-subline-value">{date_range}</span>
+  </div>
+
+  <div class="plot-subline" style="
+      margin-top:0.5em;
+      font-size:1em;
+      color:#4b6b82;
+      max-width:900px;
+      line-height:1.4;
+      text-align:left;
+    ">
+    <span class="plot-legend-title"><strong> Sample Exceeds Standard: </strong></span>
+    <span class="legend-item">
+      <span class="legend-label" style="color: #651010ff;""> True
+      <i class=" fa-solid fa-x" style="color: #651010ff;"> </i>
+      </span>
+      <span> | </span>
+      <span class="legend-item">
+        <span class="legend-label" style="color:#1d0e81ff;""> False
+        <i class=" fa-solid fa-check" style="color: #1d0e81ff;"> </i>
+        </span>
+      </span>
+  </div>
+  <div class="plot-subline" style="
+      margin-top:0.5em;
+      font-size:1em;
+      color:#4b6b82;
+      max-width:900px;
+      line-height:1.4;
+      text-align:left;
+    ">
+    <span class="plot-subline-label"><strong>Precipitation Range: </strong> &nbsp;</span>
+    <span class="plot-subline-value">{precip_range}</span>
+
+    <span class="info-icon" style="color: rgb(192, 214, 255);" data-tooltip="123" aria-label="Precipitation data info">
+      <span style="
+          cursor:help;
+          position:relative;
+          display:inline-flex;
+          align-items:center;
+          color:#0A2B43;
+          opacity:0.95;
+        "
+        onmouseenter="this.querySelector('.tip').style.opacity='1'; this.querySelector('.tip').style.transform='translateY(0)'"
+        onmouseleave="this.querySelector('.tip').style.opacity='0'; this.querySelector('.tip').style.transform='translateY(6px)'">
+        <i class="fa-solid fa-circle-info" style="font-size:0.75em;"></i>
+
+        <div class="tip" style="
+            position:absolute;
+            top:26px;
+            left:-20em;
+            transform:translate(10%, 6px);
+            width:340px;
+            padding:12px 14px;
+            background:rgba(20,30,45,0.95);
+            color:#fff;
+            font-size:15px;
+            line-height:1.45;
+            border-radius:12px;
+            box-shadow:0 14px 30px rgba(0,0,0,0.35);
+            opacity:0;
+            pointer-events:none;
+            transition:opacity 0.15s ease, transform 0.15s ease;
+            z-index:9999;
+            text-align:left;
+            border:1px solid rgba(255,255,255,0.12);
+          ">
+          <div style="font-weight:800; font-size:1.25em; margin-bottom:8px;">
+            Precipitation Data
+          </div>
+          <div style="opacity:0.95;">
+            Values represent total precipitation throghout the basin during the 72 hours prior to sampling.
+            The range reflects min and max based on current page filters. See the Precipitation section in the
+            background page for more information about our weather stations.
+            </ul>
+          </div>
+        </div>
+      </span>
+    </span>
+  </div>
+</div>
+</div>

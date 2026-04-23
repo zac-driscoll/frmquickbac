@@ -19,6 +19,9 @@
 attachment::att_amend_desc()
 
 ## Add modules ----
+## Create a Landing Page
+golem::add_module(name = "landing_page", with_test = FALSE)
+
 ## Create a module infrastructure in R/
 golem::add_module(name = "selection_pane1", with_test = TRUE) # Name of the module
 golem::add_module(name = "map", with_test = TRUE) # Name of the module

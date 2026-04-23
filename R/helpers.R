@@ -9,6 +9,21 @@ load_survey_data <- function() {
   arrow::open_dataset(path)
 }
 
+load_precip_data <- function() {
+  path <- system.file("extdata", "precip_data.parquet", package = "FRMQuickBac")
+
+  if (path == "") {
+    # fallback for devtools::load_all()
+    path <- file.path("inst", "extdata", "precip_data.parquet")
+  }
+
+  arrow::open_dataset(path)
+}
+
+
+
+
+
 custom_theme <- function() {
   ggplot2::theme_minimal(base_size = 20) +
     ggplot2::theme(
@@ -181,4 +196,155 @@ render_template <- function(name, ...) {
   args <- list(...)
   content <- readr::read_file(path)
   glue::glue(content, .envir = list2env(args, parent = environment()))
+}
+
+
+#build leaflet legend
+build_leaflet_legend <- function(watersheds) {
+
+  # palette
+  watershed_levels <- c(
+    "Cedar Creek",
+    "Menomonee River",
+    "Kinnickinnic River",
+    "Lower Milwaukee River"
+  )
+
+  pal2 <- leaflet::colorFactor(
+    palette = "viridis",
+    domain  = watershed_levels
+  )
+
+  # ---- shared styles ----
+  item_style <- "
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:4px 0;
+  "
+
+  label_style <- "
+    font-weight:600;
+    line-height:1.2;
+  "
+
+  swatch_base <- "
+    width:16px;
+    height:16px;
+    display:inline-block;
+    flex-shrink:0;
+    font-size:0.7rem;
+  "
+
+  section_title <- function(txt) {
+    glue::glue("
+      <div style='
+        margin-top:10px;
+        margin-bottom:4px;
+        font-size:0.7rem;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:0.04em;
+        color:#345A88;
+      '>{txt}</div>
+    ")
+  }
+
+  # ---- watershed items ----
+  watershed_items <- purrr::map2_chr(
+    watershed_levels,
+    pal2(watershed_levels),
+    ~ glue::glue("
+      <div style='{item_style}'>
+        <span style='
+          {swatch_base}
+          background:{.y};
+          border-radius:3px;
+        '></span>
+        <span style='{label_style}'>{.x}</span>
+      </div>
+    ")
+  ) |> paste(collapse = "")
+
+  # ---- weather stations ----
+  weather_station <- glue::glue("
+    <div style='{item_style}'>
+      <span style='
+        {swatch_base}
+        background:#979ea8;
+        border-radius:50%;
+      '></span>
+      <span style='{label_style}'>Weather Stations</span>
+    </div>
+  ")
+
+  # ---- sample sites ----
+  sample_sites <- glue::glue("
+    <div style='{item_style}'>
+      <span style='
+        {swatch_base}
+        background:#651010ff;
+        border-radius:50%;
+      '></span>
+      <span style='{label_style}'>Exceeds Standard</span>
+    </div>
+
+    <div style='{item_style}'>
+      <span style='
+        {swatch_base}
+        background:#1d0e81ff;
+        border-radius:50%;
+      '></span>
+      <span style='{label_style}'>Meets Standard</span>
+    </div>
+  ")
+
+  # ---- outer container ----
+  legend_html <- glue::glue("
+    <div style='
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #4b7591ff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-family: Poppins, Arial, sans-serif;
+      font-size: 0.7rem;
+      color: #0A2B43;
+      min-width: 140px;
+    '>
+
+      {section_title('Sample Sites')}
+      {sample_sites}
+
+      {section_title('Weather Stations')}
+      {weather_station}
+
+      {section_title('Watersheds')}
+      {watershed_items}
+
+    </div>
+  ")
+
+  legend_html
+}
+
+
+
+wrangle_download_data <- function(yrs){
+        dat <- load_survey_data()
+        dat |>
+          dplyr::collect() |>
+          dplyr::filter(Year %in% yrs) |>
+          dplyr::select(SiteCode, LabelName, WaterBody, Date, ReadingVal,  HoursDry, Precip72Hr) |>
+          tidyr::pivot_wider(names_from = LabelName, values_from = ReadingVal) |>
+          dplyr::relocate(HoursDry, .after = dplyr::last_col()) |>
+          dplyr::relocate(Precip72Hr, .after = dplyr::last_col()) |>
+          dplyr::select(
+            SiteCode,
+            WaterBody,
+            Date,
+            "Dissolved Oxygen (mg/L)" = "Dissolved Oxygen",
+            "E. coli (CFU/100mL)" = "E. coli",
+            "Fecal Coliform (CFU/100mL)" = "Fecal Coliform", 
+            HoursDry,
+            Precip72Hr)
 }

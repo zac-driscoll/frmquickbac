@@ -20,6 +20,7 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
     ns <- session$ns
 
     dat <- load_survey_data()
+    precip_dat <- load_precip_data()
 
     return(
     shiny::reactive({
@@ -38,9 +39,8 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
             Year %in% years,
             Depth %in% depth
           ) |>
-          dplyr::select(LabelName, Date, ReadingNum, Year, SiteCode, Depth, Units) |>
+          dplyr::select(LabelName, Date, ReadingNum, Year, SiteCode, Depth, Units, WeatherStation, Latitude, Longitude, SiteDescription ) |>
           dplyr::mutate(type = paste(years, "Results"))
-
         # historic averages
         hist_df <- dat |>
           dplyr::collect() |>
@@ -61,17 +61,24 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
             Depth = depth,
             Year = NA
           )
-
         # filter precip data
-        precip_dat_filt <- precip_data |>
-          dplyr::filter(Year == years) |>
+        years_i <- as.integer(years)
+      station_val <- as.character(unique(base_df$WeatherStation)[1])
+        precip_dat_filt <- 
+          precip_dat |>
+          dplyr::filter(
+            Year %in% years_i,
+            station_id %in% station_val) |>
+          dplyr::collect() |> 
           dplyr::mutate(
-            LabelName = "Average Basin Wide Precip",
-            type = paste(years, "Results"),
+            LabelName = paste("Daily Precipitation:", station_val),
+            type = paste("Precip"),
             Units = "Inches",
             SiteCode = site
+          ) |>
+          dplyr::left_join(
+        ws_lookup |> dplyr::select(station_id = WeatherStation, Latitude = Lat, Longitude =  Long, SiteDescription = Description)
           )
-
         dplyr::bind_rows(base_df, hist_df, precip_dat_filt)
     })
     )

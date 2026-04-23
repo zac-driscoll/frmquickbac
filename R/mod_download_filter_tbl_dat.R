@@ -34,15 +34,21 @@ mod_download_filter_tbl_dat_server <- function(id, tbl_inputs){
         # base dataset
         dat |>
           dplyr::collect() |>
-          dplyr::filter(
-            Year %in% years,
-            Date %in% dates
-          ) |>
+          dplyr::filter(Year %in% years) |>
           dplyr::select(SiteCode, LabelName, WaterBody, Date, ReadingVal,  HoursDry, Precip72Hr) |>
           tidyr::pivot_wider(names_from = LabelName, values_from = ReadingVal) |>
           dplyr::relocate(HoursDry, .after = dplyr::last_col()) |>
-          dplyr::relocate(Precip72Hr, .after = dplyr::last_col()) 
-
+          dplyr::relocate(Precip72Hr, .after = dplyr::last_col()) |>
+          dplyr::filter( Date %in% dates) |>
+          dplyr::select(
+            SiteCode,
+            WaterBody,
+            Date,
+            "Dissolved Oxygen (mg/L)" = "Dissolved Oxygen",
+            "E. coli (CFU/100mL)" = "E. coli",
+            "Fecal Coliform (CFU/100mL)" = "Fecal Coliform", 
+            HoursDry,
+            Precip72Hr)
       
     })
     )

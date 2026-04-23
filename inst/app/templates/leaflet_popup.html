@@ -1,6 +1,6 @@
 <div style='
   font-family: Arial, sans-serif;
-  font-size: 16px;
+  font-size: 1.1rem;
   line-height: 1.5;
   border: 3px solid {Color};
   border-radius: 10px;
@@ -11,10 +11,10 @@
   max-width: 360px;
 '>
 
-  <div style='font-weight:bold; font-size:18px; color:{Color}; margin-bottom:6px;'>
+  <div style='font-weight:bold; font-size:1.1rem; color:{Color}; margin-bottom:6px;'>
     Site: {Site}
   </div>
-  <div style='font-size:16px; color:black; margin-bottom:3px;'>
+  <div style='font-size:1.1rem; color:black; margin-bottom:3px;'>
     {SiteDescription}
   </div>
 
@@ -23,9 +23,10 @@
   <table style='width:100%; border-collapse:collapse; text-align:center;'>
     <thead style='background-color:{Color}; color:white;'>
       <tr>
-        <th style='padding:6px;'>Result</th>
-        <th style='padding:6px;'>72-Hr Precip</th>
-        <th style='padding:6px;'>Hours Dry</th>
+        <th style='padding:6px;font-size:0.9rem;  '>Result</th>
+        <th style='padding:6px;font-size:0.9rem; '>72-Hr Precip</th>
+        <th style='padding:6px;font-size:0.9rem; '>Hours Dry</th>
+        <th style='padding:6px;font-size:0.9rem; '>Weather Station</th>
       </tr>
     </thead>
     <tbody>
@@ -33,6 +34,7 @@
         <td style='padding:6px; font-weight:bold;'>{round(Result, 2)}</td>
         <td style='padding:6px;'>{paste(Precip72Hr, 'in')}</td>
         <td style='padding:6px;'>{HoursDry}</td>
+        <td style='padding:6px;'>{WeatherStation}</td>
       </tr>
     </tbody>
   </table>

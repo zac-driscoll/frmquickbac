@@ -40,29 +40,61 @@ mod_filter_map_dat_server <- function(id, map_inputs){
     # --- filter data only when button clicked ---
     dat_filt_out <- shiny::eventReactive(input$apply_filters, {
       vals <- shiny::isolate(map_inputs())
-      req(vals$survey_date, vals$parameter, vals$watershed)
+      req(vals$survey_date, vals$parameter, vals$watershed) 
       shiny::isolate({
-        dat |>
+        is_do <- grepl("Oxygen",vals$parameter)
+        wq_std <- if (is_do) 5 else 126
+        #filter data
+        df <- 
+          dat |>
           dplyr::filter(
             Date == vals$survey_date,
             LabelName == vals$parameter,
             Watershed %in% vals$watershed,
             ReadingNum <= input$result_max
           ) |>
-          dplyr::select(
-            Site  = SiteCode, 
-            Latitude, Longitude, 
-            Result = ReadingNum, 
-            WaterBody, 
-            SiteDescription,
-            Precip72Hr,
-            HoursDry,
-            LabelName,
-            Watershed,
-            Date,
-            Units
-          ) |>
-          dplyr::collect()
+          dplyr::collect()  |>
+          dplyr::mutate(
+            exceedance = NA,
+            Color = NA
+          )
+        #process data if it is not null
+        if (!is.null(df) & nrow(df) != 0) {
+          df <- 
+          df |>   
+          dplyr::rowwise() |>
+          dplyr::mutate(
+            exceedance = dplyr::if_else(
+              is_do,
+              ReadingNum < wq_std,
+              ReadingNum > wq_std
+            ),
+            Color = dplyr::if_else(
+              exceedance,
+              "#651010ff",
+              "#1d0e81ff"
+            )) |>
+            dplyr::ungroup() 
+          }
+          return(
+            df |>
+             dplyr::select(
+              Site  = SiteCode, 
+              Latitude, Longitude, 
+              Result = ReadingNum, 
+              WaterBody, 
+              SiteDescription,
+              Precip72Hr,
+              HoursDry,
+              LabelName,
+              Watershed,
+              Date,
+              Units,
+              exceedance,
+              Color,
+              WeatherStation
+            ) 
+          )
       })
     })
     list(survey_data = dat_filt_out)

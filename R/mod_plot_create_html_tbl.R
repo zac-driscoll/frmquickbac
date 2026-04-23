@@ -32,7 +32,7 @@ glue::glue("
     border:1px solid #A9CCE3; 
     border-radius:8px; 
     padding:8px; 
-    font-size:20px;
+    font-size:1.1rem;
     margin-top:10px;'>
     No data available for this selection
   </div>")
@@ -57,9 +57,9 @@ fmt_num <- function(x) {
   rows_html <- glue::glue_data(
     tbl,
     "<tr>
-       <td style='padding:10px 14px; text-align:left; font-weight:600; font-size:21px; border-bottom:1px solid #e7e7e7;'>{Metric}</td>
-       <td style='padding:10px 14px; text-align:right; color:{current_color}; font-weight:700;  font-size:21px; border-bottom:1px solid #e7e7e7;'>{fmt_num(current)}</td>
-       <td style='padding:10px 14px; text-align:right; color:{other_color};   font-weight:700; font-size:21px; border-bottom:1px solid #e7e7e7;'>{fmt_num(other)}</td>
+       <td style='padding:10px 14px; text-align:left; font-weight:600; font-size:1.1em; border-bottom:1px solid #e7e7e7;'>{Metric}</td>
+       <td style='padding:10px 14px; text-align:right; color:{current_color}; font-weight:700;  font-size:1.1em; border-bottom:1px solid #e7e7e7;'>{fmt_num(current)}</td>
+       <td style='padding:10px 14px; text-align:right; color:{other_color};   font-weight:700; font-size:1.1em; border-bottom:1px solid #e7e7e7;'>{fmt_num(other)}</td>
      </tr>"
   ) |> glue::glue_collapse(sep = "\n")
       

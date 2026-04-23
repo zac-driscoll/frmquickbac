@@ -50,7 +50,7 @@ mod_download_table_dt_server <- function(id, tbl_dat) {
             )
           ),
           deferRender = TRUE,
-          scrollY = 700,
+          scrollY = "65vh",
           scroller = TRUE
         )
       )

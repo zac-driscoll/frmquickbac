@@ -22,7 +22,6 @@ ns <- NS(id)
       shiny::uiOutput(ns("years")),
       shiny::uiOutput(ns("watershed")),
       shiny::uiOutput(ns("site")),
-      shiny::uiOutput(ns("depth")),
       shiny::actionButton(ns("get_data"), "Get Data")
     )
   )
@@ -41,10 +40,10 @@ output$text <- renderUI({
                   padding:10px;
                   border-radius:6px;
                   margin-bottom:10px;'>
-        <div style='font-size:18px; font-weight:bold; margin-bottom:4px;'>
+        <div style='font-size:1em; font-weight:bold; margin-bottom:4px;'>
           Select Values in the dropdown to get started.
         </div>
-                  <div>
+          <div style='font-size:0.75rem;'>
             <b style='color:#d9534f;'>Tip:</b>
             Hover over points on the plot to see more information. 
           </div>
@@ -88,23 +87,14 @@ output$text <- renderUI({
     })
 
     # ---- DEPTH SELECT ----
-    output$depth <- shiny::renderUI({
-      req(input$site)  # ✅ wait until site is chosen
-      depth <- dat |>
-        dplyr::collect() |>
-        dplyr::filter(SiteCode %in% input$site) |>
-        dplyr::distinct(Depth) |>
-        dplyr::pull() |>
-        sort()
-      shiny::selectInput(ns("depth"), "Select Depth", choices = depth)
-    })
+
 
 return(
   shiny::eventReactive(input$get_data, {
     mod_output <- list()
     mod_output[["years"]] <- input$years
     mod_output[["site"]] <- input$site
-    mod_output[["depth"]] <- input$depth
+    mod_output[["depth"]] <- "S"
     mod_output  
   })
 )

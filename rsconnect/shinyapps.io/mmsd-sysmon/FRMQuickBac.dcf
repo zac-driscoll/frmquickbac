@@ -1,0 +1,10 @@
+name: FRMQuickBac
+title: FRMQuickBac
+username: mmsd-sysmon
+account: mmsd-sysmon
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16445340
+bundleId: 11573320
+url: https://mmsd-sysmon.shinyapps.io/FRMQuickBac/
+version: 1

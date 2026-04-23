@@ -3,7 +3,7 @@ mod_selection_pane1_ui <- function(id, date_input = TRUE, param_input = TRUE, wa
   ns <- NS(id)
   tagList(
     bs4Dash::bs4Card(
-      title = "",
+      title = "Select Inputs",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
@@ -38,10 +38,10 @@ mod_selection_pane1_server <- function(id, date_input = TRUE, param_input = TRUE
                     padding:10px;
                     border-radius:6px;
                     margin-bottom:10px;'>
-          <div style='font-size:18px; font-weight:bold; margin-bottom:4px;'>
+          <div style='font-size:1rem; font-weight:bold; margin-bottom:4px;'>
           Select Values in the dropdown to get started.
           </div>
-          <div>
+          <div style='font-size:0.75rem;'>
             <b style='color:#d9534f;'>Tip:</b>
             Click points on the map to see more information. 
           </div>

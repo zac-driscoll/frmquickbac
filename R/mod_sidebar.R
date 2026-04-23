@@ -9,7 +9,8 @@
 #' @importFrom shiny NS tagList
 mod_sidebar_menu_ui <- function(id) {
   ns <- NS(id)
-  bs4Dash::bs4SidebarMenu(
+  bs4Dash::bs4SidebarMenu( 
+    bs4Dash::bs4SidebarMenuItem("Background", tabName = "Landing", icon = shiny::icon("info")),
     bs4Dash::bs4SidebarMenuItem("Map", tabName = "Map", icon = shiny::icon("info")),
     bs4Dash::bs4SidebarMenuItem("Plot", tabName = "Plot", icon = shiny::icon("info")),
     bs4Dash::bs4SidebarMenuItem("Table", tabName = "Table", icon = shiny::icon("info"))

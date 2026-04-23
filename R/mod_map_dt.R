@@ -22,28 +22,24 @@
 #' @noRd
 mod_map_dt_ui <- function(id) {
   ns <- NS(id)
-    bs4Dash::bs4Card(
-      title = "",
-      status = "primary",
-      solidHeader = TRUE,
-      width = 12,
-      closable = FALSE,
-      collapsible = TRUE,
-      collapsed = FALSE,
-      # ✨ Adjusted fixed height to account for filters above
-      div(
-        style = "
-          height: calc(37vh - 74px);  /* half map height for balance */
-          min-height: 250px;
-          overflow-y: auto;
-          overflow-x: auto;
-          padding: 4px;
-        ",
-        shiny::uiOutput(ns("text")),
-        DT::dataTableOutput(ns('map_dt'), width = "100%")
-      )
-    )
+
+  bs4Dash::bs4Card(
+    title = "Table of Results",
+    status = "primary",
+    solidHeader = TRUE,
+    width = 12,
+    closable = FALSE,
+    collapsible = TRUE,
+    collapsed = FALSE,
+
+    shiny::uiOutput(ns("text")),
+
+
+
+    DT::DTOutput(ns("map_dt"))
+  )
 }
+
 
 #' map_dt Server Function
 #' @noRd 
@@ -63,10 +59,7 @@ output$text <- renderUI({
                   padding:10px;
                   border-radius:6px;
                   margin-bottom:10px;'>
-        <div style='font-size:18px; font-weight:bold; margin-bottom:4px;'>
-          Survey Results for {params} on {survey_dat}
-        </div>
-        <div>
+        <div style = 'font-size:0.8rem;'>
           <b style='color:#d9534f;'>Tip:</b>
           Click a point(s) in the table to highlight it on the map.
         </div>
@@ -98,31 +91,44 @@ output$text <- renderUI({
           palette = color_pal,
           domain  = df$Result
         )
-        output$map_dt <- DT::renderDataTable({
+output$map_dt <- DT::renderDataTable({
   rng <- range(df$Result, na.rm = TRUE)
-  cuts <- seq(rng[1], rng[2], length.out = 6)   # 5 intervals
-  colors <- pal(seq(rng[1], rng[2], length.out = 6))
 
   DT::datatable(
-    dplyr::select(df, Site, Result, SiteDescription) |>
-    dplyr::arrange(desc(Result)),
+    dplyr::select(df, Site, Result, SiteDescription, Color) |>
+      dplyr::arrange(dplyr::desc(Result)),
     rownames = FALSE,
     selection = "multiple",
+    extensions = "FixedHeader",
     options = list(
       scrollX = TRUE,
+
+      # IMPORTANT: scrollY must be a CSS size string (not TRUE)
+      scrollY = "17vh",  # tweak this number to taste
+      scrollCollapse = TRUE,
+      dom = "tip",
+
+      # Fixed header config (offset helps in bs4Dash layouts)
+      fixedHeader = list(header = TRUE, headerOffset = 80),
+
       pageLength = 50,
-      dom = 'T',
-      scrollY = "calc(35vh - 100px)",
       paging = TRUE,
       autoWidth = TRUE,
-      responsive = TRUE
+      responsive = TRUE,
+
+      columnDefs = list(
+        list(visible = FALSE, targets = 3),  # hide Color column
+        list(className = "dt-center", targets = "_all")  # 👈 center headers
+      )
     )
   ) |>
     DT::formatStyle(
       columns = c("Site", "Result", "SiteDescription"),
-      color = DT::styleInterval(cuts[-length(cuts)], colors)
+      valueColumns = "Color",
+      color = DT::styleValue()
     )
 })
+
 observeEvent(input$map_dt_rows_selected, 
   { df <- dat_filt() 
     df <-  df |> dplyr::arrange(desc(Result))

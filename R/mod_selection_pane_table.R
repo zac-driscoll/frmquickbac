@@ -21,9 +21,19 @@ mod_selection_pane_table_ui <- function(id) {
       collapsed = FALSE,
       shiny::uiOutput(ns("text")),
     shiny::uiOutput(ns("years")),
+    shiny::br(),
     shiny::uiOutput(ns("dates")),
-    shiny::actionButton(ns("get_data"), "Get Data")
+    shiny::br(),
+    shiny::hr(),
+    shiny::br(), 
+    shiny::fluidRow(
+      shiny::column(5, offset = 1,
+        shiny::actionButton(ns("get_data"), "Get Selected Dates")),
+      shiny::column(6,  
+    tags$span(id = ns("download_ns"), `data-ns` = ns(""), style="display:none;"),
+    shiny::downloadButton(ns("downloadData"), "Download Full Year"))
     )
+  )
   )
   )
 }
@@ -43,7 +53,7 @@ mod_selection_pane_table_server <- function(id){
                   padding:10px;
                   border-radius:6px;
                   margin-bottom:10px;'>
-        <div style='font-size:18px; font-weight:bold; margin-bottom:4px;'>
+        <div style='font-size:0.1em; font-weight:bold; margin-bottom:4px;'>
           Select Values in the dropdown to get started.
         </div>
                   <div>
@@ -83,14 +93,36 @@ mod_selection_pane_table_server <- function(id){
     })
 
 
-return(
-  shiny::eventReactive(input$get_data, {
-    mod_output <- list()
-    mod_output[["years"]] <- input$years
-    mod_output[["dates"]] <- input$dates
-    mod_output  
-  })
+  #download selected year
+ output$downloadData <- downloadHandler(
+  filename = function() {
+    req(input$years)
+    paste0(input$years, " MMSD Bacteria Data.csv")
+  },
+  content = function(file) {
+    req(input$years)
+    df <- wrangle_download_data(input$years)  # <- your function call
+    readr::write_csv(df, file, na = "")
+  }
 )
+    
+observeEvent(input$download_clicked, {
+  req(input$years)
+  showNotification(
+    paste0("Download started: ", input$years, " MMSD Bacteria Data.csv"),
+    type = "message",
+    duration = 3
+  )
+})
+
+
+    
+  #filter by date
+  shiny::eventReactive(input$get_data, {
+    dat <- wrangle_download_data(input$years)
+    dat |> dplyr::filter( Date %in% input$dates)
+  })
+
   })
 }
     

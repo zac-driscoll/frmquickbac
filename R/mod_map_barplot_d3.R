@@ -82,9 +82,9 @@ mod_map_barplot_d3_server <- function(id, dat) {
       precip_title <- glue::glue(
         "{min_precip} - {max_precip} Inches"
       )
-      info_html <- readr::read_file(
-        "inst/app/templates/precip_info_box.html"
-      )
+    info_html <- readr::read_file(
+      get_template_path("precip_info_box.html")
+    )
       # ---- Color + tooltip logic ----
       df <- df |>
         dplyr::rowwise() |>
@@ -103,8 +103,8 @@ mod_map_barplot_d3_server <- function(id, dat) {
       # ---- D3 Plot ----
       r2d3::r2d3(
         data = df,
-        script = "inst/app/www/barplot.js",
-        css= "inst/app/www/barplot.js",
+        script = get_www_path("barplot.js"),
+        # css    = system.file("app/www/barplot.css", package = "FRMQuickBac"),
         options = list(
           sort_desc    = is_do,
           units        = units,

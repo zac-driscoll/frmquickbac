@@ -1,26 +1,30 @@
-load_survey_data <- function() {
-  path <- system.file("extdata", "survey_dat.parquet", package = "FRMQuickBac")
+load_parquet_dataset <- function(filename) {
+  data_dir <- Sys.getenv("FRMQUICKBAC_DATA_DIR", unset = "")
 
-  if (path == "") {
-    # fallback for devtools::load_all()
-    path <- file.path("inst", "extdata", "survey_dat.parquet")
+  if (nzchar(data_dir)) {
+    path <- file.path(data_dir, filename)
+  } else {
+    path <- system.file("extdata", filename, package = "FRMQuickBac")
+
+    if (path == "") {
+      path <- file.path("inst", "extdata", filename)
+    }
+  }
+
+  if (!file.exists(path)) {
+    stop("Could not find file: ", filename, " at: ", path, call. = FALSE)
   }
 
   arrow::open_dataset(path)
+}
+
+load_survey_data <- function() {
+  load_parquet_dataset("survey_dat.parquet")
 }
 
 load_precip_data <- function() {
-  path <- system.file("extdata", "precip_data.parquet", package = "FRMQuickBac")
-
-  if (path == "") {
-    # fallback for devtools::load_all()
-    path <- file.path("inst", "extdata", "precip_data.parquet")
-  }
-
-  arrow::open_dataset(path)
+  load_parquet_dataset("precip_data.parquet")
 }
-
-
 
 
 
@@ -347,4 +351,19 @@ wrangle_download_data <- function(yrs){
             "Fecal Coliform (CFU/100mL)" = "Fecal Coliform", 
             HoursDry,
             Precip72Hr)
+}
+
+
+get_www_path <- function(file_name) {
+  pkg_path <- system.file("app/www", package = "FRMQuickBac")
+
+  if (nzchar(pkg_path)) {
+    full_path <- file.path(pkg_path, file_name)
+    if (file.exists(full_path)) return(full_path)
+  }
+
+  dev_path <- file.path("inst/app/www", file_name)
+  if (file.exists(dev_path)) return(dev_path)
+
+  stop(glue::glue("WWW file '{file_name}' not found."))
 }

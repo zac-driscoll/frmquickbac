@@ -147,7 +147,7 @@ output$loc_map <- leaflet::renderLeaflet({
           )
     r2d3::r2d3(
       data = df,
-      script =  "inst/app/www/ts_plot.js",
+      script =  get_www_path("ts_plot.js"),
       d3_version = "5"
     )
     })

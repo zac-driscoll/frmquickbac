@@ -47,10 +47,19 @@ mod_plot_dat_server <- function(id, dat) {
     output$title <- shiny::renderUI({
       site <- unique(dat()$SiteCode)
       year <- unique(stats::na.omit(dat()$Year))[1]
-      #template uses {site} / {year}, glue() will fill them
-      shiny::HTML(glue::glue(
-        readr::read_file("inst/app/templates/plot_title.html")
-      ))
+      SiteDescription <- dat() |>
+        dplyr::filter(grepl("Results", type)) |>
+        dplyr::slice(1) |>
+        dplyr::pull(SiteDescription)
+
+      shiny::HTML(
+        render_template(
+          "plot_title",
+          site = site,
+          year = year,
+          SiteDescription = SiteDescription
+        )
+      )
     })
 
     # Plots

@@ -132,11 +132,16 @@ output$loc_map <- leaflet::renderLeaflet({
         dat () |>
         dplyr::filter(grepl("Results", type)) |>
         dplyr::slice(1) |>
-        dplyr::distinct(SiteDescription)
+        dplyr::pull(SiteDescription)
 
-      shiny::HTML(glue::glue(
-        readr::read_file("inst/app/templates/plot_title.html")
-      ))
+      shiny::HTML(
+        render_template(
+          "plot_title",
+          site = site,
+          year = year,
+          SiteDescription = SiteDescription
+        )
+      )
     })
     output$ts_plot <-  r2d3::renderD3({
       df <- 

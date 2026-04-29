@@ -1,19 +1,20 @@
 load_parquet_dataset <- function(filename) {
   data_dir <- Sys.getenv("FRMQUICKBAC_DATA_DIR", unset = "")
-
-  if (nzchar(data_dir)) {
-    path <- file.path(data_dir, filename)
-  } else {
-    path <- system.file("extdata", filename, package = "FRMQuickBac")
-
-    if (path == "") {
-      path <- file.path("inst", "extdata", filename)
-    }
-  }
-
-  if (!file.exists(path)) {
-    stop("Could not find file: ", filename, " at: ", path, call. = FALSE)
-  }
+  path <- paste0("data/", filename)
+#
+#   if (nzchar(data_dir)) {
+#     path <- file.path(data_dir, filename)
+#   } else {
+#     path <- system.file("extdata", filename, package = "FRMQuickBac")
+#
+#     if (path == "") {
+#       path <- file.path("inst", "extdata", filename)
+#     }
+#   }
+#
+#   if (!file.exists(path)) {
+#     stop("Could not find file: ", filename, " at: ", path, call. = FALSE)
+#   }
 
   arrow::open_dataset(path)
 }

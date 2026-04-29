@@ -1,25 +1,30 @@
-load_survey_data <- function() {
-  path <- system.file("extdata", "survey_dat.parquet", package = "FRMQuickBac")
+load_parquet_dataset <- function(filename) {
+  data_dir <- Sys.getenv("FRMQUICKBAC_DATA_DIR", unset = "")
 
-  if (path == "") {
-    # fallback for devtools::load_all()
-    path <- file.path("inst", "extdata", "survey_dat.parquet")
+  if (nzchar(data_dir)) {
+    path <- file.path(data_dir, filename)
+  } else {
+    path <- system.file("extdata", filename, package = "FRMQuickBac")
+
+    if (path == "") {
+      path <- file.path("inst", "extdata", filename)
+    }
+  }
+
+  if (!file.exists(path)) {
+    stop("Could not find file: ", filename, " at: ", path, call. = FALSE)
   }
 
   arrow::open_dataset(path)
+}
+
+load_survey_data <- function() {
+  load_parquet_dataset("survey_dat.parquet")
 }
 
 load_precip_data <- function() {
-  path <- system.file("extdata", "precip_data.parquet", package = "FRMQuickBac")
-
-  if (path == "") {
-    # fallback for devtools::load_all()
-    path <- file.path("inst", "extdata", "precip_data.parquet")
-  }
-
-  arrow::open_dataset(path)
+  load_parquet_dataset("precip_data.parquet")
 }
-
 
 
 
@@ -29,15 +34,15 @@ custom_theme <- function() {
     ggplot2::theme(
       # Plot background (outer area)
       plot.background = ggplot2::element_rect(
-        fill = "#F1F9FF", 
-        color = "#A9CCE3", 
+        fill = "#F1F9FF",
+        color = "#A9CCE3",
         linewidth = 1,
         linetype = 'solid'
       ),
 
       # Panel background (the plotting area itself)
       panel.background = ggplot2::element_rect(
-        fill = "#E6ECF4", 
+        fill = "#E6ECF4",
         color = "#A9CCE3",
         linewidth = 1
       ),
@@ -63,21 +68,21 @@ custom_theme <- function() {
 
       # Titles
       plot.title = ggplot2::element_text(
-        color = "#0A2B43", 
-        face = "bold", 
-        size = 22, 
+        color = "#0A2B43",
+        face = "bold",
+        size = 22,
         hjust = 0.5
       ),
       plot.caption = ggplot2::element_text(color = "#345A88", size = 10),
 
       # Strip (for facets)
       strip.background = ggplot2::element_rect(
-        fill = "#96AEC7", 
+        fill = "#96AEC7",
         color = "#064789"
       ),
       strip.text = ggplot2::element_text(
-        color = "#F1F9FF", 
-        face = "bold", 
+        color = "#F1F9FF",
+        face = "bold",
         size = 10
       )
     )
@@ -97,7 +102,7 @@ if (is.null(df)) {
 } else {
 
   # Ensure we have a valid year
-  df <- dplyr::filter(df, LabelName == label_name) 
+  df <- dplyr::filter(df, LabelName == label_name)
   year <- na.omit(unique(df$Year))[1]
   req(!is.na(year))
 
@@ -114,7 +119,7 @@ if (is.null(df)) {
   month_labels <- function(x) format(x, "%b") |> substr(1, 1)
 
 
-  df <- 
+  df <-
     df |>
     dplyr::mutate(
       Color = dplyr::if_else(grepl("Historic",type),"#219E63","#064789"),
@@ -130,7 +135,7 @@ p <- df |>
       x = Date,
       y = ReadingNum,
       color = type,
-      group = 1, 
+      group = 1,
       text = glue::glue("
 <b style='font-size:20px; color:{Color};'>{type}</b><br>
 <b style='font-size:18px; color:black;'> {DisplayDateLabel} </b> {DisplayDate}<br>
@@ -178,16 +183,16 @@ plotly::ggplotly(p, tooltip = "text") |>
 get_template_path <- function(file_name) {
   # Try installed path first
   pkg_path <- system.file("app/templates", package = "FRMQuickBac")
-  
+
   if (nzchar(pkg_path)) {
     full_path <- file.path(pkg_path, file_name)
     if (file.exists(full_path)) return(full_path)
   }
-  
+
   # Fallback: development mode (when using devtools::load_all())
   dev_path <- file.path("inst/app/templates", file_name)
   if (file.exists(dev_path)) return(dev_path)
-  
+
   stop(glue::glue("Template file '{file_name}' not found in either installed or dev paths."))
 }
 
@@ -344,7 +349,7 @@ wrangle_download_data <- function(yrs){
             Date,
             "Dissolved Oxygen (mg/L)" = "Dissolved Oxygen",
             "E. coli (CFU/100mL)" = "E. coli",
-            "Fecal Coliform (CFU/100mL)" = "Fecal Coliform", 
+            "Fecal Coliform (CFU/100mL)" = "Fecal Coliform",
             HoursDry,
             Precip72Hr)
 }

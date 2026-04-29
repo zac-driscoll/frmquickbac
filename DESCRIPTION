@@ -1,6 +1,6 @@
 Package: FRMQuickBac
 Title: An Amazing Shiny App
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person(given = "firstname",
            family = "lastname",

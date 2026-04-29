@@ -196,6 +196,17 @@ get_template_path <- function(file_name) {
   stop(glue::glue("Template file '{file_name}' not found in either installed or dev paths."))
 }
 
+
+get_www_path <- function(file_name) {
+  pkg_file <- system.file(file.path("app/www", file_name), package = "FRMQuickBac")
+  if (nzchar(pkg_file) && file.exists(pkg_file)) return(pkg_file)
+
+  dev_file <- file.path("inst/app/www", file_name)
+  if (file.exists(dev_file)) return(dev_file)
+
+  stop(glue::glue("WWW asset '{file_name}' not found in either installed or dev paths."))
+}
+
 render_template <- function(name, ...) {
   path <- get_template_path(paste0(name, ".html"))
   args <- list(...)

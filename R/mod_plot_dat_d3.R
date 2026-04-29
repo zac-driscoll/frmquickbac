@@ -135,7 +135,7 @@ output$loc_map <- leaflet::renderLeaflet({
         dplyr::distinct(SiteDescription)
 
       shiny::HTML(glue::glue(
-        readr::read_file("inst/app/templates/plot_title.html")
+        readr::read_file(get_template_path("plot_title.html"))
       ))
     })
     output$ts_plot <-  r2d3::renderD3({
@@ -147,7 +147,7 @@ output$loc_map <- leaflet::renderLeaflet({
           )
     r2d3::r2d3(
       data = df,
-      script =  "inst/app/www/ts_plot.js",
+      script = get_www_path("ts_plot.js"),
       d3_version = "5"
     )
     })

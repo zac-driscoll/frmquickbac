@@ -1,7 +1,6 @@
 load_parquet_dataset <- function(filename) {
   data_dir <- Sys.getenv("FRMQUICKBAC_DATA_DIR", unset = "")
-  path <- paste0("data_fake/", filename)
-#
+  path <- system.file("extdata", filename, package = "FRMQuickBac")
 #   if (nzchar(data_dir)) {
 #     path <- file.path(data_dir, filename)
 #   } else {

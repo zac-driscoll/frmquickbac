@@ -49,7 +49,7 @@ mod_plot_dat_server <- function(id, dat) {
       year <- unique(stats::na.omit(dat()$Year))[1]
       #template uses {site} / {year}, glue() will fill them
       shiny::HTML(glue::glue(
-        readr::read_file("inst/app/templates/plot_title.html")
+        readr::read_file(get_template_path("plot_title.html"))
       ))
     })
 

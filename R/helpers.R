@@ -274,7 +274,7 @@ build_leaflet_legend <- function(watersheds) {
         background:#979ea8;
         border-radius:50%;
       '></span>
-      <span style='{label_style}'>Weather Stations</span>
+      <span style='{label_style}'>Rain Gauges</span>
     </div>
   ")
 
@@ -312,10 +312,10 @@ build_leaflet_legend <- function(watersheds) {
       min-width: 140px;
     '>
 
-      {section_title('Sample Sites')}
+      {section_title('Monitoring Sites')}
       {sample_sites}
 
-      {section_title('Weather Stations')}
+      {section_title('Rain Gauges')}
       {weather_station}
 
       {section_title('Watersheds')}

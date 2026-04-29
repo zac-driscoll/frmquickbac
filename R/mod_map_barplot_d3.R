@@ -96,7 +96,8 @@ mod_map_barplot_d3_server <- function(id, dat) {
             Result          = Result,
             Precip72Hr      = Precip72Hr,
             HoursDry        = HoursDry,
-            Color           = Color
+            Color           = Color,
+            Time = Time
           )
         ) |>
         dplyr::ungroup()

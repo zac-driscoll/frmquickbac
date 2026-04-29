@@ -16,7 +16,7 @@ mod_plot_sum_tbl_ui <- function(id) {
 
   shiny::tagList(
     bs4Dash::bs4Card(
-      title = "Summary Stats",
+      title = "Summary Statistics",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
@@ -64,7 +64,8 @@ mod_plot_sum_tbl_server <- function(id, ecoli_dat, do_dat, fecal_dat) {
         mod_plot_create_html_tbl_server(
           "plot_create_html_tbl_1",
           ecoli_dat()[-3,],
-          "E. coli"
+          "E. coli",
+          0
         )
       )
     })
@@ -74,7 +75,8 @@ mod_plot_sum_tbl_server <- function(id, ecoli_dat, do_dat, fecal_dat) {
         mod_plot_create_html_tbl_server(
           "plot_create_html_tbl_2",
           do_dat()[-3,],
-          "Dissolved Oxygen"
+          "Dissolved Oxygen",
+          1
         )
       )
     })
@@ -84,7 +86,8 @@ mod_plot_sum_tbl_server <- function(id, ecoli_dat, do_dat, fecal_dat) {
         mod_plot_create_html_tbl_server(
           "plot_create_html_tbl_3",
           fecal_dat()[-3,],
-          "Fecal Coliform"
+          "Fecal Coliform",
+          0
         )
       )
     })

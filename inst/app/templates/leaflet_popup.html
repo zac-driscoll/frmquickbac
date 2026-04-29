@@ -8,7 +8,7 @@
   background-color: rgba(255,255,255,0.9);
   color: #111;
   box-shadow: 2px 2px 8px rgba(0,0,0,0.25);
-  max-width: 360px;
+  max-width: 400px;
 '>
 
   <div style='font-weight:bold; font-size:1.1rem; color:{Color}; margin-bottom:6px;'>
@@ -23,17 +23,17 @@
   <table style='width:100%; border-collapse:collapse; text-align:center;'>
     <thead style='background-color:{Color}; color:white;'>
       <tr>
+        <th style='padding:6px;font-size:0.9rem; '>Time</th>
         <th style='padding:6px;font-size:0.9rem;  '>Result</th>
-        <th style='padding:6px;font-size:0.9rem; '>72-Hr Precip</th>
-        <th style='padding:6px;font-size:0.9rem; '>Hours Dry</th>
+        <th style='padding:6px;font-size:0.9rem; '>48-Hr Precip</th>
         <th style='padding:6px;font-size:0.9rem; '>Weather Station</th>
       </tr>
     </thead>
     <tbody>
       <tr>
+        <td style='padding:6px; white-space:nowrap;'>{Time}</td>
         <td style='padding:6px; font-weight:bold;'>{round(Result, 2)}</td>
         <td style='padding:6px;'>{paste(Precip72Hr, 'in')}</td>
-        <td style='padding:6px;'>{HoursDry}</td>
         <td style='padding:6px;'>{WeatherStation}</td>
       </tr>
     </tbody>

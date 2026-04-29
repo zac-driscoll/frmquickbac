@@ -24,7 +24,7 @@ mod_map_dt_ui <- function(id) {
   ns <- NS(id)
 
   bs4Dash::bs4Card(
-    title = "Table of Results",
+    title = shiny::uiOutput(ns("table_title")),
     status = "primary",
     solidHeader = TRUE,
     width = 12,
@@ -61,7 +61,7 @@ output$text <- renderUI({
                   margin-bottom:10px;'>
         <div style = 'font-size:0.8rem;'>
           <b style='color:#d9534f;'>Tip:</b>
-          Click a point(s) in the table to highlight it on the map.
+          Click a point(s) in the table to highlight a site on the map.
         </div>
       </div>
       <hr style='margin-top:10px; margin-bottom:10px;'>"
@@ -91,11 +91,29 @@ output$text <- renderUI({
           palette = color_pal,
           domain  = df$Result
         )
+
+ output$table_title <- shiny::renderUI({
+  df <- dat_filt()
+
+  req(nrow(df) > 0)
+
+  parameter <- unique(df$LabelName)
+  units <- unique(df$Units)
+
+  parameter <- parameter[1]
+  units <- units[1]
+
+  shiny::HTML(glue::glue(
+    "Results: {parameter} ({units})"
+  ))
+})
+
+
 output$map_dt <- DT::renderDataTable({
   rng <- range(df$Result, na.rm = TRUE)
 
   DT::datatable(
-    dplyr::select(df, Site, Result, SiteDescription, Color) |>
+    dplyr::select(df, Time, Site, Result, SiteDescription, Color) |>
       dplyr::arrange(dplyr::desc(Result)),
     rownames = FALSE,
     selection = "multiple",
@@ -117,13 +135,13 @@ output$map_dt <- DT::renderDataTable({
       responsive = TRUE,
 
       columnDefs = list(
-        list(visible = FALSE, targets = 3),  # hide Color column
+        list(visible = FALSE, targets = 4),  # hide Color column
         list(className = "dt-center", targets = "_all")  # 👈 center headers
       )
     )
   ) |>
     DT::formatStyle(
-      columns = c("Site", "Result", "SiteDescription"),
+      columns = c("Time", "Site", "Result", "SiteDescription"),
       valueColumns = "Color",
       color = DT::styleValue()
     )

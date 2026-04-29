@@ -12,7 +12,7 @@ mod_selection_pane_table_ui <- function(id) {
   tagList(
       tagList(
     bs4Dash::bs4Card(
-      title = "Select Input",
+      title = "Download Data",
       status = "primary",
       solidHeader = TRUE,
       width = 12,
@@ -53,12 +53,9 @@ mod_selection_pane_table_server <- function(id){
                   padding:10px;
                   border-radius:6px;
                   margin-bottom:10px;'>
-        <div style='font-size:0.1em; font-weight:bold; margin-bottom:4px;'>
-          Select Values in the dropdown to get started.
-        </div>
                   <div>
             <b style='color:#d9534f;'>Tip:</b>
-            Hover over points on the plot to see more information. 
+            Select specific dates or download an entire year of data 
           </div>
       </div>
       <hr style='margin-top:10px; margin-bottom:10px;'>"

@@ -11,7 +11,7 @@ mod_download_table_dt_ui <- function(id) {
   ns <- NS(id)
   tagList(
     bs4Dash::bs4Card(
-      title = "Select Input",
+      title = "",
       status = "primary",
       solidHeader = TRUE,
       width = 12,

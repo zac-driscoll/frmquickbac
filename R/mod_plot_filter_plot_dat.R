@@ -31,7 +31,7 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
         years <- vals$years
         depth <- vals$depth
 
-        # base dataset
+        # base datasetn
         base_df <- dat |>
           dplyr::collect() |>
           dplyr::filter(

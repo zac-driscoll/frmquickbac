@@ -17,11 +17,11 @@ mod_plot_create_html_tbl_ui <- function(id) {
 #' plot_create_html_tbl Server Functions
 #'
 #' @noRd 
-mod_plot_create_html_tbl_server <- function(id, df, param_name){
+mod_plot_create_html_tbl_server <- function(id, df, param_name, n_digits){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     generate_summary_table <- function(
-      df, current_color = "#064789", other_color = "#219E63",  digits = 2) {
+      df, current_color = "#064789", other_color = "#219E63",  digits = n_digits) {
 
   # Build a compact frame we can glue safely
   if(nrow(df) == 0){

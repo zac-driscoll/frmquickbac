@@ -11,7 +11,7 @@ mod_selection_panel_plot_ui <- function(id) {
 ns <- NS(id)
   tagList(
     bs4Dash::bs4Card(
-      title = "Select Input",
+      title = "Select Inputs",
       status = "primary",
       solidHeader = TRUE,
       width = 12,

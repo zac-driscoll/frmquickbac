@@ -10,7 +10,7 @@
 mod_filter_map_dat_ui <- function(id) {
   ns <- NS(id)
   tagList( 
-    shiny::sliderInput(ns("result_max"), "Select Max Result:", min = 0, max = 1, value = 1),
+    shiny::sliderInput(ns("result_max"), "Select Max Result", min = 0, max = 1, value = 1),
     shiny::actionButton(ns("apply_filters"), "Apply Filters", class = "btn-primary")
   )
 }
@@ -92,7 +92,8 @@ mod_filter_map_dat_server <- function(id, map_inputs){
               Units,
               exceedance,
               Color,
-              WeatherStation
+              WeatherStation,
+              Time
             ) 
           )
       })

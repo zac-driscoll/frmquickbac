@@ -11,7 +11,7 @@ mod_plot_dat_d3_ui <- function(id) {
   ns <- NS(id)
   tagList(
     bs4Dash::bs4Card(
-  title = "Site Map",
+  title = "",
   status = "primary",       # 💙 keeps the header color
   solidHeader = TRUE,
   width = 12,

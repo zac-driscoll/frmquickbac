@@ -372,7 +372,10 @@ facetG.each(function (facet) {
     .attr("class", d => `series series-${String(d.key).replace(/\s+/g, "-")}`);
 
   // Lines (fast draw, restore dash for historical)
-  const linePaths = sG.append("path")
+  // Lines (do not draw Hist/Historical at all)
+  const linePaths = sG
+    .filter(d => !/hist|histor/i.test(String(d.key)))
+    .append("path")
     .attr("class", "series-line")
     .attr("fill", "none")
     .attr("stroke", d => seriesColor(d.key))
@@ -382,7 +385,6 @@ facetG.each(function (facet) {
   linePaths.each(function (d) {
     const path = d3.select(this);
     const total = this.getTotalLength();
-    const isHist = /histor/.test(String(d.key).toLowerCase());
 
     path
       .attr("stroke-dasharray", `${total} ${total}`)
@@ -392,7 +394,7 @@ facetG.each(function (facet) {
       .ease(d3.easeCubicOut)
       .attr("stroke-dashoffset", 0)
       .on("end", function () {
-        d3.select(this).attr("stroke-dasharray", isHist ? "6,4" : null);
+        d3.select(this).attr("stroke-dasharray", null);
       });
   });
 

@@ -170,6 +170,7 @@ observe({
         Site = Site,
         WaterBody = WaterBody,
         SiteDescription = SiteDescription,
+        Time = Time,
         Precip72Hr = Precip72Hr,
         HoursDry = HoursDry,
         Color = Color,

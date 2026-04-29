@@ -20,16 +20,16 @@
   <table style='width:100%; border-collapse:collapse; text-align:center;'>
     <thead style='background-color:{Color}; color:white;'>
       <tr>
+        <th style='padding:6px;'>Time</th>
         <th style='padding:6px;'>Result</th>
-        <th style='padding:6px;'>72-Hr Precip</th>
-        <th style='padding:6px;'>Hours Dry</th>
+        <th style='padding:6px;'>48-Hr Precip</th>
       </tr>
     </thead>
     <tbody>
       <tr>
+        <td style='padding:6px; white-space:nowrap;'>{Time}</td>
         <td style='padding:6px; font-weight:bold;'>{round(Result, 2)}</td>
         <td style='padding:6px;'>{Precip72Hr} in</td>
-        <td style='padding:6px;'>{HoursDry}</td>
       </tr>
     </tbody>
   </table>
